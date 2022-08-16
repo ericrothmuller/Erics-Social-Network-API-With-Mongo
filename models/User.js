@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  lastAccessed: { type: Date, default: Date.now },
+  username: { type: String, unique: true, required: true, trimmed: true },
+  email: { type: String, unique: true, required: true, validator: true},
+  thoughts: { needTo: "array of _id values referencing the Thought model"},
+  friends: { needTo: "array of _id values referencing the User model (self-reference) - Schema Settings - Create a virtual called friendCount that retrieves the length of the user's friends array field on query."},
 });
 
 const User = mongoose.model('User', userSchema);

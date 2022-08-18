@@ -17,7 +17,7 @@ try {
   const usersInfo = await User.findById(req.params.id, ["username", "email", "thoughts", "friends",]);
 
   if (!usersInfo) {
-    res.sendStatus(404);
+    res.status(500).json("No user exists by that ID");
     return;
   }
 
@@ -56,7 +56,48 @@ router.post("/api/users", async (req, res) => {
   });
 
 // Update a user by ID
-router.put("/api/users/:id", async (req, res) => {});
+router.put("/api/users/:id", async (req, res) => {
+    try {
+
+      const user = await User.findById(req.params.id);
+
+      if (!user) {
+        res.status(500).json("No user exists by that ID");
+        return;
+      }
+  
+      if (req.body.username) {
+        user.username = req.body.username;
+      }
+
+      if (req.body.email) {
+        user.email = req.body.email;
+      }
+
+      await user.save();
+      res.status(500);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  });
 
 // Delete user by ID
-router.delete("/api/users/:id", async (req, res) => {});
+router.delete("/api/users/:id", async (req, res) => {
+    try {
+
+      const user = await User.findById(req.params.id);
+
+      if (!user) {
+        res.status(500).json("No user exists by that ID");
+        return;
+      }
+
+    Thought.deleteMany({ _id: user.thoughts });
+
+    User.deleteOne({ _id: user});
+
+      res.status(200).json("User deleted successfully");
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  });

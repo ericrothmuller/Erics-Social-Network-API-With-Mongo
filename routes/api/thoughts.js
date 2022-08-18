@@ -5,7 +5,7 @@ const { User, Thought } = require("../../models");
 router.get("/api/thoughts", async (req, res) => {
     try {
       const thoughts = await Thought.find({});
-      
+
       res.status(200).json(thoughts);
     } catch (err) {
       res.status(500).json(err);
@@ -13,7 +13,20 @@ router.get("/api/thoughts", async (req, res) => {
 });
 
 // Get single thought by ID
-router.get("/api/thoughts/:id", async (req, res) => {});
+router.get("/api/thoughts/:id", async (req, res) => {
+  try {
+    const thoughtbyId = await Thought.findById(req.params.id);
+
+    if (!thoughtbyId) {
+      res.sendStatus(500).json("No thought exists by that ID");
+      return;
+    }
+    
+    res.status(200).json(thoughtbyId);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 
 // Post new thought (and push to ID associated to user's thoughts array field)
 router.post("/api/thoughts", async (req, res) => {});

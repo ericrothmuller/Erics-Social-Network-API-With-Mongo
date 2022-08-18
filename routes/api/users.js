@@ -94,7 +94,7 @@ router.delete("/api/users/:id", async (req, res) => {
 
     Thought.deleteMany({ _id: user.thoughts });
 
-    User.deleteOne({ _id: user});
+    User.deleteOne({ _id: user._id});
 
       res.status(200).json("User deleted successfully");
     } catch (err) {

@@ -16,4 +16,10 @@ router.put("/api/thoughts/:id", async (req, res) => {});
 // Delete a thought by ID
 router.delete("/api/thoughts/:id", async (req, res) => {});
 
+// Create a reaction stored in a single thought's reactions array field
+router.post("/api/thoughts/:thoughtId/reactions", async (req, res) => {});
+
+// Pull and remove a reaction by a reaction's reactionId
+router.delete("/api/thoughts/:thoughtId/reactions", async (req, res) => {});
+
 module.exports = router;

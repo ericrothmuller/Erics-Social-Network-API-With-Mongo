@@ -78,7 +78,7 @@ router.put("/:id", async (req, res) => {
       }
 
       await user.save();
-      res.status(500);
+      res.sendStatus(200);
     } catch (err) {
       res.status(500).json(err);
     }

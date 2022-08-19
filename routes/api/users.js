@@ -2,7 +2,7 @@ const router = require("express").Router();
 const { User, Thought } = require("../../models");
 
 // Get All Users
-router.get("/api/users", async (req, res) => {
+router.get("/", async (req, res) => {
     try {
       const users = await User.find({}, ["_id", "username", "email", "thoughts", "friends",]);
       res.status(200).json(users);
@@ -12,7 +12,7 @@ router.get("/api/users", async (req, res) => {
   });
 
 // Get Single User By ID
-router.get("/api/users/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
 try {
   const usersInfo = await User.findById(req.params.id, ["username", "email", "thoughts", "friends",]);
 
@@ -36,8 +36,8 @@ try {
 }
 });
 
-// Post a new user
-router.post("/api/users", async (req, res) => {
+// Create a new user
+router.post("/", async (req, res) => {
     try {
 
       if (!req.body.username || !req.body.email) {
@@ -46,17 +46,20 @@ router.post("/api/users", async (req, res) => {
       }
 
       const createUser = {username: req.body.username, email: req.body.email};
-  
-      const newUser = await User.create({createUser, thoughts: [], friends: []});
 
-      res.status(200).json(newUser);
+      const createUserData = await User.create({
+        ...createUser,
+        friends: [],
+        thoughts: [],
+      });
+      res.status(200).json(createUserData);
     } catch (err) {
       res.status(500).json(err);
     }
   });
 
 // Update a user by ID
-router.put("/api/users/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
     try {
 
       const user = await User.findById(req.params.id);
@@ -82,7 +85,7 @@ router.put("/api/users/:id", async (req, res) => {
   });
 
 // Delete user by ID
-router.delete("/api/users/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
     try {
 
       const user = await User.findById(req.params.id);

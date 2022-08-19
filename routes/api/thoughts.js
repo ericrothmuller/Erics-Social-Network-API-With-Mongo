@@ -87,11 +87,13 @@ router.post("/:id/reactions", async (req, res) => {
       res.status(500).json("Username and Reaction text are required.");
       return;
     }
+    const reactionId = new ObjectId();
 
-    const newReaction = {username: req.body.username, reactionBody: req.body.reactionBody};
+    const newReaction = {username: req.body.username, reactionBody: req.body.reactionBody, reactionId};
 
-    const createReaction = await Thought.findOneAndUpdate({_id: req.params.id}, {$push: { reactions: newReaction }}, {new: true});
-    res.status(200).json(createReaction);
+    await Thought.findOneAndUpdate({_id: req.params.id}, {$push: { reactions: newReaction }}, {new: true});
+
+    res.status(200).json("Reaction created successfully");
   } catch (err) {
     res.status(500).json(err);
   }

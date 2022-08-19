@@ -31,37 +31,9 @@ router.get("/:id", async (req, res) => {
 // Post new thought (and push to ID associated to user's thoughts array field)
 router.post("/", async (req, res) => {
   try {
-    const newThought = {
-      _id: new ObjectId(),
-      thoughtText: req.body.thoughtText,
-      username: req.body.username,
-    };
+    Thought.create(req.body)
 
-    const thoughtUsername = await User.findOne({ username: newThought.username });
-    
-    if (!newThought.thoughtText || !newThought.username) {
-      res.status(500).json("A thought requires a text entry and a username.");
-      return;
-    }
-
-    if (newThought.thoughtText.length > 280) {
-      res.status(500).json("Text can't exceed 280 characters");
-      return;
-    }
-
-    if (!thoughtUsername) {
-      res.status(500).json("No username found for that ID");
-      return;
-    }
-
-    if (!thoughtUsername.thoughts) {
-      thoughtUsername.thoughts = [];
-    }
-
-    thoughtUsername.thoughts.push(newThought._id);
-    const promises = [thoughtUsername.save(), Thought.create({ newThought })];
-
-    await Promise.all(promises);
+    const createThought = await User.findOneAndUpdate({ username: req.body.username }, { $addToSet: { thoughts: Thought._id } }, { new: true });
 
     res.sendStatus(200);
   } catch (err) {
@@ -99,6 +71,7 @@ router.delete("/:id", async (req, res) => {
     }
 
     await deleteThought.delete();
+
     res.sendStatus(200);
   } catch (err) {
     res.status(500).json(err);

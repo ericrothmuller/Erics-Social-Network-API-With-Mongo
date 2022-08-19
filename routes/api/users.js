@@ -88,6 +88,8 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
     try {
 
+      const deleteArray = [];
+
       const user = await User.findById(req.params.id);
 
       if (!user) {
@@ -95,9 +97,11 @@ router.delete("/:id", async (req, res) => {
         return;
       }
 
-    Thought.deleteMany({ _id: user.thoughts });
+    deleteArray.push(Thought.deleteMany({ _id: user.thoughts }));
 
-    User.deleteOne({ _id: user._id});
+    deleteArray.push(user.delete());
+
+    await Promise.all(deleteArray);
 
       res.status(200).json("User deleted successfully");
     } catch (err) {

@@ -107,9 +107,40 @@ router.delete("/:id", async (req, res) => {
 
 
 // Create a reaction stored in a single thought's reactions array field
-router.post("/:thoughtId/reactions", async (req, res) => {});
+router.post("/:id/reactions", async (req, res) => {
+  try {
+
+    if (!req.body.username || !req.body.reactionBody) {
+      res.status(500).json("Username and Reaction text are required.");
+      return;
+    }
+
+    const newReaction = {username: req.body.username, reactionBody: req.body.reactionBody};
+
+    const createReaction = await Thought.findOneAndUpdate({_id: req.params.id}, {$push: { reactions: newReaction }}, {new: true});
+    res.status(200).json(createReaction);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 
 // Pull and remove a reaction by a reaction's reactionId
-router.delete("/:thoughtId/reactions", async (req, res) => {});
+router.delete("/:id/reactions", async (req, res) => {
+  try {
+
+    const reactionById = await req.body.reactionId;
+
+    if (!reactionById) {
+      res.status(500).json("No reaction exists by that ID");
+      return;
+    }
+
+   Thought.deleteOne({reactionId: reactionById});
+
+    res.status(200).json("Reaction deleted successfully");
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 
 module.exports = router;
